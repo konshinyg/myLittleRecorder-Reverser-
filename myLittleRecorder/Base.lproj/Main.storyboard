@@ -41,10 +41,19 @@
                                     <action selector="recButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xda-07-6aE"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VAU-2c-VGj">
+                                <rect key="frame" x="300" y="206" width="59" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Delete"/>
+                                <connections>
+                                    <action selector="deleteButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nEk-na-LEd"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="deleteButton" destination="VAU-2c-VGj" id="i10-TC-koY"/>
                         <outlet property="recButtonOutlet" destination="Za7-Tg-lp0" id="eXc-vu-Fsh"/>
                     </connections>
                 </viewController>
