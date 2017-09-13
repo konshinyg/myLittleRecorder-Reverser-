@@ -28,7 +28,7 @@
                                     <navigationItem title="First" id="fYp-On-jp4"/>
                                 </items>
                             </navigationBar>
-                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Za7-Tg-lp0" colorLabel="IBBuiltInLabel-Red">
+                            <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Za7-Tg-lp0" colorLabel="IBBuiltInLabel-Red">
                                 <rect key="frame" x="123" y="206" width="128" height="128"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
