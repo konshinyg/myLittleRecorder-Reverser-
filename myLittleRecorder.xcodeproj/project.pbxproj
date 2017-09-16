@@ -17,6 +17,8 @@
 		1372CA801F2513E800B5D075 /* myLittleRecorder.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1372CA7E1F2513E800B5D075 /* myLittleRecorder.xcdatamodeld */; };
 		1372CA821F2513E800B5D075 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1372CA811F2513E800B5D075 /* Assets.xcassets */; };
 		1372CA851F2513E800B5D075 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1372CA831F2513E800B5D075 /* LaunchScreen.storyboard */; };
+		13A100281F6CFAD500393C39 /* RecordsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13A100271F6CFAD500393C39 /* RecordsViewController.swift */; };
+		13B819781F6D26E200D5B228 /* trackList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B819771F6D26E200D5B228 /* trackList.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		1372CA811F2513E800B5D075 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1372CA841F2513E800B5D075 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1372CA861F2513E800B5D075 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		13A100271F6CFAD500393C39 /* RecordsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordsViewController.swift; sourceTree = "<group>"; };
+		13B819771F6D26E200D5B228 /* trackList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = trackList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,16 +71,26 @@
 				1372CA771F2513E800B5D075 /* AppDelegate.swift */,
 				1372CA791F2513E800B5D075 /* ViewController.swift */,
 				1372CA7B1F2513E800B5D075 /* Main.storyboard */,
-				135612C51F57925A0057435A /* stop.png */,
-				135612BF1F5790F80057435A /* play.png */,
-				135612C01F5790F80057435A /* rec.png */,
-				1372CA811F2513E800B5D075 /* Assets.xcassets */,
+				13A100271F6CFAD500393C39 /* RecordsViewController.swift */,
 				130185441F39B62E0007BEE6 /* recCell.swift */,
+				13B819771F6D26E200D5B228 /* trackList.swift */,
+				13A100241F6CF9CE00393C39 /* resourses */,
+				1372CA811F2513E800B5D075 /* Assets.xcassets */,
 				1372CA831F2513E800B5D075 /* LaunchScreen.storyboard */,
 				1372CA861F2513E800B5D075 /* Info.plist */,
 				1372CA7E1F2513E800B5D075 /* myLittleRecorder.xcdatamodeld */,
 			);
 			path = myLittleRecorder;
+			sourceTree = "<group>";
+		};
+		13A100241F6CF9CE00393C39 /* resourses */ = {
+			isa = PBXGroup;
+			children = (
+				135612C51F57925A0057435A /* stop.png */,
+				135612BF1F5790F80057435A /* play.png */,
+				135612C01F5790F80057435A /* rec.png */,
+			);
+			name = resourses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -157,9 +171,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				130185451F39B62E0007BEE6 /* recCell.swift in Sources */,
+				13B819781F6D26E200D5B228 /* trackList.swift in Sources */,
 				1372CA7A1F2513E800B5D075 /* ViewController.swift in Sources */,
 				1372CA801F2513E800B5D075 /* myLittleRecorder.xcdatamodeld in Sources */,
 				1372CA781F2513E800B5D075 /* AppDelegate.swift in Sources */,
+				13A100281F6CFAD500393C39 /* RecordsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

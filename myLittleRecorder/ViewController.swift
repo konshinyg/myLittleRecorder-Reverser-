@@ -1,8 +1,8 @@
 
 import UIKit
 import AVFoundation
-//import CoreAudio
 
+let urlData = trackList()
 class ViewController: UIViewController {
     
     @IBOutlet weak var recButtonOutlet: UIButton!
@@ -18,11 +18,14 @@ class ViewController: UIViewController {
     var url = URL(fileURLWithPath: "")
     var urlReversed = URL(fileURLWithPath: "")
     var timer = Timer()
+    var cell = recCell()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         recButtonOutlet.setImage(UIImage(named: "rec.png"), for: UIControlState.normal)
         deleteButton.isEnabled = false
+        urlData.listRecordings()
     }
     
     @IBAction func recButton(_ sender: UIButton) {
@@ -42,9 +45,7 @@ class ViewController: UIViewController {
             recButtonOutlet.setImage(UIImage(named: "stop.png"), for: UIControlState.normal)
             isPlaying = true
             deleteButton.isEnabled = false
-            let urlReversed = makeItReverse()
             startPlay(urlReversed: urlReversed)
-            
             timer = Timer.scheduledTimer(timeInterval: 1.0, target: self,
                                          selector: #selector(audioPlayerDidFinishPlaying),
                                          userInfo: nil,
@@ -71,16 +72,16 @@ class ViewController: UIViewController {
                                                      appropriateFor: nil,
                                                      create: true)
         let dataURL = documents.appendingPathComponent("recordTest_" + "\(swiftBlogs.count)" + ".wav")
-        let dataURLReversed = documents.appendingPathComponent("recordTest_" + "\(swiftBlogs.count)" + "_reversed.wav")
+        let dataURLReversed = documents.appendingPathComponent("recordTest_" + "\(urlData.recordings.count)" + "_reversed.wav")
         swiftBlogs.append(swiftBlogs.count)
         let dataPath = dataURL.path
         let dataPathReversed = dataURLReversed.path
         url = NSURL.fileURL(withPath: dataPath as String)
         urlReversed = NSURL.fileURL(withPath: dataPathReversed as String)
-        let recordSettings:[String : Any] = [AVSampleRateKey : 44100.0,
+        let recordSettings:[String : Any] = [AVSampleRateKey : 16000,
                                              AVFormatIDKey : kAudioFormatLinearPCM,
                                              AVNumberOfChannelsKey : 1,
-                                             AVEncoderAudioQualityKey : AVAudioQuality.medium.rawValue]
+                                             AVEncoderAudioQualityKey : AVAudioQuality.low.hashValue]
         print("url : \(url)")
         try! audioRecorder = AVAudioRecorder(url:url, settings: recordSettings)
         audioRecorder.prepareToRecord()
@@ -89,12 +90,10 @@ class ViewController: UIViewController {
     }
     
     func startPlay(urlReversed: URL) {
-        if (!audioRecorder.isRecording){
-            do {
-                try audioPlayer = AVAudioPlayer(contentsOf: urlReversed)
-                audioPlayer.play()
-            } catch {
-            }
+        do {
+            try audioPlayer = AVAudioPlayer(contentsOf: urlReversed)
+            audioPlayer.play()
+        } catch {
         }
     }
     
@@ -103,6 +102,17 @@ class ViewController: UIViewController {
         if isPlaying {
             audioPlayer.stop()
             isPlaying = false
+        } else {
+            urlReversed = makeItReverse()
+            print("removing file at \(url.absoluteString)")
+            let fileManager = FileManager.default
+            
+            do {
+                try fileManager.removeItem(at: url)
+            } catch {
+                print(error.localizedDescription)
+                print("error deleting recording")
+            }
         }
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -114,16 +124,8 @@ class ViewController: UIViewController {
     
     // MARK: -- action for delete button
     @IBAction func deleteButtonPressed(_ sender: UIButton) {
-        print("removing file at \(url.absoluteString)")
-        let fileManager = FileManager.default
-        
-        do {
-            try fileManager.removeItem(at: url)
-        } catch {
-            print(error.localizedDescription)
-            print("error deleting recording")
-        }
         print("removing file at \(urlReversed.absoluteString)")
+        let fileManager = FileManager.default
         do {
             try fileManager.removeItem(at: urlReversed)
         } catch {
@@ -135,6 +137,11 @@ class ViewController: UIViewController {
         deleteButton.isEnabled = false
         audioRecorder = nil
     }
+    
+    @IBAction func removeAllRecsPressed(_ sender: UIButton) {
+        urlData.removeAllRecords()
+    }
+    
     
     // MARK: -- audioPlayerDidFinishPlaying
     func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
@@ -175,7 +182,7 @@ class ViewController: UIViewController {
         // Set up file that the reversed audio will be loaded into
         var reversedAudioFile: AudioFileID? = nil
         var format = AudioStreamBasicDescription()
-        format.mSampleRate = 44100
+        format.mSampleRate = 16000
         format.mFormatID = kAudioFormatLinearPCM
         format.mChannelsPerFrame = 1
         format.mFramesPerPacket = 1
