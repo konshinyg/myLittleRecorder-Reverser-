@@ -3,36 +3,35 @@ import UIKit
 import AVFoundation
 
 class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    let cellName = ["record#1", "record#2", "record#3", "record#4", "record#5"]
+//    let cellName = ["record#1", "record#2", "record#3", "record#4", "record#5"]
     var player: AVAudioPlayer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        urlData.listRecordings()
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return urlData.recordings.count
+        return recordTracks.count
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let recCell = tableView.dequeueReusableCell(withIdentifier: "recCell", for: indexPath)
-        recCell.textLabel?.text = String(cellName[indexPath.row])
+        recCell.textLabel?.text = (recordTracks[indexPath.row]).value(forKey: "name") as? String
         return recCell
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("\(urlData.recordings[indexPath.row]) selected")
-        playIt(urlData.recordings[indexPath.row])
+        let currentTrack = (recordTracks[indexPath.row]).value(forKey: "rectrack") as! String
+        let currentTrackURL = URL(string: currentTrack)
+        playIt(url: currentTrackURL!)
+        
     }
     
-    func playIt(_ url: URL) {
+    func playIt(url: URL) {
         do {
             self.player = try AVAudioPlayer(contentsOf: url)
             player.prepareToPlay()
@@ -42,5 +41,34 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
             player = nil
             print("AVAudioPlayer init failed")
         }
-    }    
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        if editingStyle == .delete {
+            
+            // get path of reversed track for removing
+            let currentTrack = (recordTracks[indexPath.row]).value(forKey: "rectrack") as! String
+            let currentTrackURL = URL(string: currentTrack)
+            
+            // delete track URL from Core Data context
+            context.delete(recordTracks[indexPath.row])
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            do {
+                try context.fetch(Tracks.fetchRequest())
+            } catch {
+                print("\(error). Mistake came from tableView commit editingStyle")
+            }
+            
+            // remove reversed track after track's URL was deleted from Core Data
+            let fileManager = FileManager.default
+            do {
+                try fileManager.removeItem(at: currentTrackURL!)
+            } catch {
+                print(error.localizedDescription)
+                print("error deleting recording")
+            }
+        }
+        tableView.reloadData()
+    }
 }
