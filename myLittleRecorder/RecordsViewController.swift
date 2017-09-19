@@ -3,7 +3,6 @@ import UIKit
 import AVFoundation
 
 class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-//    let cellName = ["record#1", "record#2", "record#3", "record#4", "record#5"]
     var player: AVAudioPlayer!
 
     override func viewDidLoad() {
@@ -32,10 +31,11 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func playIt(url: URL) {
+        print("\(#function)")
         do {
             self.player = try AVAudioPlayer(contentsOf: url)
             player.prepareToPlay()
-            player.volume = 1.0
+            player.volume = 2.0
             player.play()
         } catch {
             player = nil
@@ -69,6 +69,7 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
                 print("error deleting recording")
             }
         }
+        context.refreshAllObjects()
         tableView.reloadData()
     }
 }
