@@ -4,11 +4,12 @@ import AVFoundation
 
 class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var player: AVAudioPlayer!
-
+    var isPlaying = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -16,7 +17,7 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return recordTracks.count
     }
-
+    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let recCell = tableView.dequeueReusableCell(withIdentifier: "recCell", for: indexPath)
         recCell.textLabel?.text = (recordTracks[indexPath.row]).value(forKey: "name") as? String
@@ -31,15 +32,20 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func playIt(url: URL) {
-        print("\(#function)")
+        
         do {
             self.player = try AVAudioPlayer(contentsOf: url)
-            player.prepareToPlay()
-            player.volume = 2.0
-            player.play()
+            if isPlaying {
+                player.stop()
+                isPlaying = false
+            } else {
+                player.prepareToPlay()
+                player.volume = 1.0
+                player.play()
+                isPlaying = true
+            }
         } catch {
             player = nil
-            print("AVAudioPlayer init failed")
         }
     }
     
@@ -56,18 +62,13 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
             (UIApplication.shared.delegate as! AppDelegate).saveContext()
             do {
                 try context.fetch(Tracks.fetchRequest())
-            } catch {
-                print("\(error). Mistake came from tableView commit editingStyle")
-            }
+            } catch {}
             
             // remove reversed track after track's URL was deleted from Core Data
             let fileManager = FileManager.default
             do {
                 try fileManager.removeItem(at: currentTrackURL!)
-            } catch {
-                print(error.localizedDescription)
-                print("error deleting recording")
-            }
+            } catch {}
         }
         context.refreshAllObjects()
         tableView.reloadData()

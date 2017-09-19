@@ -14,10 +14,7 @@ class trackList {
             recordings = urls.filter( { (name: URL) -> Bool in
                 return name.lastPathComponent.hasSuffix("wav")
             })
-        } catch {
-            print(error.localizedDescription)
-            print("something went wrong listing recordings")
-        }
+        } catch {}
     }
     
     // MARK: -- delete the oldest track
@@ -26,11 +23,8 @@ class trackList {
         
         do {
             let files = try FileManager.default.contentsOfDirectory(atPath: docsDir)
-            let recToRemove = files.filter{ $0.hasSuffix("wav") }
-        } catch {
-            print("could not get contents of directory at \(docsDir)")
-            print(error.localizedDescription)
-        }
+            _ = files.filter{ $0.hasSuffix("wav") }
+        } catch {}
         
 /*        do {
             try FileManager.default.removeItem(at: URL)
@@ -52,14 +46,8 @@ class trackList {
                 let path = docsDir + "/" + recsToRemove[i]
                 do {
                     try FileManager.default.removeItem(atPath: path)
-                } catch {
-                    NSLog("could not remove \(path)")
-                    print(error.localizedDescription)
-                }
+                } catch {}
             }
-        } catch {
-            print("could not get contents of directory at \(docsDir)")
-            print(error.localizedDescription)
-        }        
+        } catch {}        
     }
 }
