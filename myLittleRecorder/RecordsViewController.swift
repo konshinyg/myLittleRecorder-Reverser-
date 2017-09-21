@@ -32,7 +32,10 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func playIt(url: URL) {
-        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, with: .defaultToSpeaker)
+            
+        } catch {}
         do {
             self.player = try AVAudioPlayer(contentsOf: url)
             if isPlaying {
@@ -49,6 +52,10 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         if editingStyle == .delete {
@@ -59,6 +66,7 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
             
             // delete track URL from Core Data context
             context.delete(recordTracks[indexPath.row])
+            recordTracks.remove(at: indexPath.row)
             (UIApplication.shared.delegate as! AppDelegate).saveContext()
             do {
                 try context.fetch(Tracks.fetchRequest())
@@ -69,8 +77,8 @@ class RecordsViewController: UIViewController, UITableViewDelegate, UITableViewD
             do {
                 try fileManager.removeItem(at: currentTrackURL!)
             } catch {}
+            
+            tableView.reloadData()
         }
-        context.refreshAllObjects()
-        tableView.reloadData()
     }
 }

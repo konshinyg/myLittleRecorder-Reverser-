@@ -24,18 +24,7 @@
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1gj-bJ-ITX">
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <items>
-                                    <navigationItem title="REVAUDI" id="fYp-On-jp4">
-                                        <barButtonItem key="rightBarButtonItem" style="plain" id="zJ7-AG-ACl">
-                                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Kho-6O-Ux6">
-                                                <rect key="frame" x="316" y="7" width="43" height="30"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <state key="normal" title="tracks"/>
-                                                <connections>
-                                                    <segue destination="wHB-mz-5bg" kind="show" id="3vf-5Y-hft"/>
-                                                </connections>
-                                            </button>
-                                        </barButtonItem>
-                                    </navigationItem>
+                                    <navigationItem title="REVAUDI" id="fYp-On-jp4"/>
                                 </items>
                             </navigationBar>
                             <button opaque="NO" alpha="0.69999999999999996" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Za7-Tg-lp0" colorLabel="IBBuiltInLabel-Red">
@@ -54,28 +43,78 @@
                                     <action selector="recButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xda-07-6aE"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MainBGBlur.png" translatesAutoresizingMaskIntoConstraints="NO" id="BP2-ve-BNk">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7gM-8c-wUy">
+                                <rect key="frame" x="154" y="436" width="66" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="njf-Sm-0sy"/>
+                                    <constraint firstAttribute="width" constant="66" id="yY7-rs-Cuv"/>
+                                </constraints>
+                                <state key="normal" title="треклист"/>
+                                <connections>
+                                    <segue destination="wHB-mz-5bg" kind="show" id="Gyy-7A-07q"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q6P-On-h1f">
+                                <rect key="frame" x="160" y="210" width="55.5" height="24"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="55.5" id="E7i-A2-XQM"/>
+                                    <constraint firstAttribute="height" constant="24" id="JNX-jX-mU5"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TCF-TX-Kn5">
+                                <rect key="frame" x="268" y="367" width="69" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="69" id="Rca-2V-87f"/>
+                                    <constraint firstAttribute="height" constant="30" id="vlV-bb-Pgc"/>
+                                </constraints>
+                                <state key="normal" title="еще один"/>
+                                <connections>
+                                    <action selector="oneMoreTrackButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OP3-yz-2oG"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="v29-bF-Zey">
+                                <rect key="frame" x="178" y="488" width="20" height="20"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="----" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E63-bO-ZM3">
+                                <rect key="frame" x="67" y="162" width="240" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="Jkv-fz-QQ5"/>
+                                    <constraint firstAttribute="height" constant="40" id="gQP-aH-NiA"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="TCF-TX-Kn5" secondAttribute="bottom" constant="270" id="1By-Vm-mqd"/>
+                            <constraint firstItem="E63-bO-ZM3" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DA3-vM-TVH"/>
+                            <constraint firstItem="v29-bF-Zey" firstAttribute="top" secondItem="7gM-8c-wUy" secondAttribute="bottom" constant="22" id="IWX-83-Xio"/>
+                            <constraint firstItem="v29-bF-Zey" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Igq-G1-68X"/>
                             <constraint firstItem="Za7-Tg-lp0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KtA-oF-v1G"/>
                             <constraint firstItem="1gj-bJ-ITX" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="LIC-he-DCI"/>
+                            <constraint firstItem="q6P-On-h1f" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Mbn-D5-0dZ"/>
+                            <constraint firstItem="q6P-On-h1f" firstAttribute="top" secondItem="E63-bO-ZM3" secondAttribute="bottom" constant="8" id="OVw-nU-N8Q"/>
+                            <constraint firstItem="7gM-8c-wUy" firstAttribute="top" secondItem="Za7-Tg-lp0" secondAttribute="bottom" constant="39" id="Qth-TP-7LW"/>
                             <constraint firstItem="1gj-bJ-ITX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="aXX-Tv-G4I"/>
                             <constraint firstItem="Za7-Tg-lp0" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="fXK-RH-KRy"/>
+                            <constraint firstItem="TCF-TX-Kn5" firstAttribute="leading" secondItem="Za7-Tg-lp0" secondAttribute="trailing" constant="17" id="iPr-ZV-BQs"/>
                             <constraint firstAttribute="trailing" secondItem="1gj-bJ-ITX" secondAttribute="trailing" id="nH9-gv-Pnl"/>
+                            <constraint firstItem="Za7-Tg-lp0" firstAttribute="top" secondItem="q6P-On-h1f" secondAttribute="bottom" constant="35" id="ti4-pR-o39"/>
+                            <constraint firstItem="7gM-8c-wUy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="w0a-zq-iWS"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="BP2-ve-BNk"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
+                        <outlet property="oneMoreTrackLabel" destination="TCF-TX-Kn5" id="Beo-90-4DW"/>
                         <outlet property="recButtonOutlet" destination="Za7-Tg-lp0" id="eXc-vu-Fsh"/>
-                        <outlet property="toTrackListButton" destination="zJ7-AG-ACl" id="iFA-OU-GN6"/>
+                        <outlet property="recordTimer" destination="q6P-On-h1f" id="HAb-Ki-CPM"/>
+                        <outlet property="spinner" destination="v29-bF-Zey" id="PSZ-ji-L8A"/>
+                        <outlet property="toTrackListButton" destination="7gM-8c-wUy" id="PlJ-bP-n4l"/>
+                        <outlet property="trackNameLabel" destination="E63-bO-ZM3" id="f4E-Zx-SEj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -100,9 +139,9 @@
                                     <navigationItem title="List of records" id="TMC-x0-Rbg">
                                         <barButtonItem key="leftBarButtonItem" style="plain" id="caI-3Q-Xb1">
                                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="gOd-DN-u92">
-                                                <rect key="frame" x="16" y="7" width="34" height="30"/>
+                                                <rect key="frame" x="16" y="7" width="33" height="30"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <state key="normal" title="back"/>
+                                                <state key="normal" title="взад"/>
                                                 <connections>
                                                     <segue destination="BYZ-38-t0r" kind="show" id="Nzb-GQ-mcX"/>
                                                 </connections>
@@ -150,7 +189,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="MainBGBlur.png" width="1024" height="768"/>
         <image name="rec.png" width="168" height="168"/>
     </resources>
 </document>

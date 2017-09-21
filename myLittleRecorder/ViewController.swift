@@ -7,7 +7,11 @@ var recordTracks = [Tracks]()
 class ViewController: UIViewController {
     
     @IBOutlet weak var recButtonOutlet: UIButton!
-    @IBOutlet weak var toTrackListButton: UIBarButtonItem!
+    @IBOutlet weak var toTrackListButton: UIButton!
+    @IBOutlet weak var trackNameLabel: UILabel!
+    @IBOutlet weak var recordTimer: UILabel!
+    @IBOutlet weak var oneMoreTrackLabel: UIButton!
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
     
     var audioRecorder:AVAudioRecorder!
     var audioPlayer:AVAudioPlayer!
@@ -17,10 +21,13 @@ class ViewController: UIViewController {
     var url = URL(fileURLWithPath: "")
     var urlReversed = URL(fileURLWithPath: "")
     var timer = Timer()
+    var date = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        recButtonOutlet.setImage(UIImage(named: "rec.png"), for: UIControlState.normal)
+        try! audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: .defaultToSpeaker)
+        try! audioSession.setActive(true)
+        oneMoreTrackLabel.isEnabled = false
     }
     
     @IBAction func recButton(_ sender: UIButton) {
@@ -30,49 +37,48 @@ class ViewController: UIViewController {
             recButtonOutlet.setImage(UIImage(named: "stop.png"), for: UIControlState.normal)
             toTrackListButton.isEnabled = false
             startRec()
-            return
         }
-        
+            
         else if audioRecorder != nil && !audioRecorder.isRecording && !isPlaying {
             recButtonOutlet.setImage(UIImage(named: "stop.png"), for: UIControlState.normal)
             startPlay(urlReversed: urlReversed)
-            return
         }
-        
-        // press to start stop
+            
+            // press to start stop
         else if  audioRecorder.isRecording || isPlaying {
             recButtonOutlet.setImage(UIImage(named: "play.png"), for: UIControlState.normal)
             recStop()
-            return
         }
     }
     
     // MARK: -- StartRec, StartPlay, StartStop functions
     func startRec() {
-        try! audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
-        try! audioSession.setActive(true)
-        let documents = try! FileManager.default.url(for: .documentDirectory,
-                                                     in: .userDomainMask,
-                                                     appropriateFor: nil,
-                                                     create: true)
-        let dataURL = documents.appendingPathComponent("recordTest_" + "\(recordTracks.count)" + ".wav")
-        let dataURLReversed = documents.appendingPathComponent("recordTest_" + "\(recordTracks.count)" + "_reversed.wav")
-        let dataPath = dataURL.path
-        let dataPathReversed = dataURLReversed.path
-        url = NSURL.fileURL(withPath: dataPath as String)
-        urlReversed = NSURL.fileURL(withPath: dataPathReversed as String)
-        let recordSettings:[String : Any] = [AVSampleRateKey : 16000,
-                                             AVFormatIDKey : kAudioFormatLinearPCM,
-                                             AVNumberOfChannelsKey : 1,
-                                             AVEncoderAudioQualityKey : AVAudioQuality.low.hashValue]
-        try! audioRecorder = AVAudioRecorder(url:url, settings: recordSettings)
-        audioRecorder.prepareToRecord()
-        audioRecorder.record()
+        audioSession.requestRecordPermission() {
+            [unowned self] granted in
+            if granted {
+                
+                DispatchQueue.main.async {
+                    self.setupRecorder()
+                    self.timer = Timer.scheduledTimer(timeInterval: 0.01, target: self,
+                                                      selector: #selector(self.timerTrackUpdate),
+                                                      userInfo: nil,
+                                                      repeats: true)
+                    self.timerTrackUpdate()
+                    self.audioRecorder.record()
+                }
+            } else {
+                print("Permission to record not granted")
+            }
+        }
+        
+        if audioSession.recordPermission() == .denied {
+            print("permission denied")
+        }
     }
     
     func startPlay(urlReversed: URL) {
-        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self,
-                                     selector: #selector(audioPlayerDidFinishPlaying),
+        timer = Timer.scheduledTimer(timeInterval: 0.01, target: self,
+                                     selector: #selector(timerTrackUpdate),
                                      userInfo: nil,
                                      repeats: true)
         do {
@@ -80,6 +86,8 @@ class ViewController: UIViewController {
             isPlaying = true
             audioPlayer.volume = 1.0
             audioPlayer.play()
+            oneMoreTrackLabel.isEnabled = false
+            toTrackListButton.isEnabled = false
         } catch {}
     }
     
@@ -87,6 +95,8 @@ class ViewController: UIViewController {
         audioPlayer.stop()
         isPlaying = false
         timer.invalidate()
+        recordTimer.text = "00:00"
+        toTrackListButton.isEnabled = true
     }
     
     func recStop() {
@@ -94,7 +104,7 @@ class ViewController: UIViewController {
             playStop()
         }
         if audioRecorder.isRecording {
-            audioRecorder.stop()
+            self.audioRecorder.stop()
             
             // making reversed track
             urlReversed = makeItReverse()
@@ -106,19 +116,45 @@ class ViewController: UIViewController {
                 try fileManager.removeItem(at: url)
             } catch {}
         }
-            do {
-                try AVAudioSession.sharedInstance().setActive(false)
-            } catch {}
-        
+        do {
+            try audioSession.setActive(false)
+        } catch {}
+        timer.invalidate()
+        recordTimer.text = "00:00"
+        oneMoreTrackLabel.isEnabled = true
         toTrackListButton.isEnabled = true
     }
     
-    // MARK: -- audioPlayerDidFinishPlaying
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
-        if !audioPlayer.isPlaying {
-            recButtonOutlet.setImage(UIImage(named: "play.png"), for: UIControlState.normal)
-            playStop()
+    // MARK: -- setup recorder
+    func setupRecorder() {
+        let format = DateFormatter()
+        format.dateFormat = "HH-mm-ss"
+        date = format.string(from: Date())
+        let documents = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask,
+                                                     appropriateFor: nil, create: true)
+        let dataURL = documents.appendingPathComponent("recordTest_" + "\(date)" + ".wav")
+        let dataURLReversed = documents.appendingPathComponent("recordTest_" + "\(date)" + "_reversed.wav")
+        let dataPath = dataURL.path
+        let dataPathReversed = dataURLReversed.path
+        url = NSURL.fileURL(withPath: dataPath as String)
+        urlReversed = NSURL.fileURL(withPath: dataPathReversed as String)
+        let recordSettings:[String : Any] = [AVSampleRateKey : 16000,
+                                             AVFormatIDKey : kAudioFormatLinearPCM,
+                                             AVNumberOfChannelsKey : 1,
+                                             AVEncoderAudioQualityKey : AVAudioQuality.low.hashValue]
+        do {
+            try audioRecorder = AVAudioRecorder(url:url, settings: recordSettings)
+            audioRecorder.prepareToRecord()
+        } catch {
+            audioRecorder = nil
         }
+    }
+    
+    // MARK: -- oneMoreTrackButtonPressed
+    @IBAction func oneMoreTrackButtonPressed(_ sender: UIButton) {
+        recButtonOutlet.setImage(UIImage(named: "rec.png"), for: UIControlState.normal)
+        oneMoreTrackLabel.isEnabled = false
+        audioRecorder = nil
     }
     
     // MARK: -- Reverse function
@@ -128,22 +164,18 @@ class ViewController: UIViewController {
         
         // Load forward audio into originalAudioFile
         var originalAudioFile: AudioFileID? = nil
-        let possibleError1 = AudioFileOpenURL(forwardAudioURL as CFURL,
-                                              AudioFilePermissions.readPermission,
-                                              0,
-                                              &originalAudioFile)
+        _ = AudioFileOpenURL(forwardAudioURL as CFURL,
+                             AudioFilePermissions.readPermission,
+                             0,
+                             &originalAudioFile)
         
         // Load the size in bytes of the original audio into originalAudioSize variable
         var originalAudioSize: Int64 = 0
         var propertySize: UInt32 = 8
-        let possibleError2 = AudioFileGetProperty(originalAudioFile!,
-                                                  kAudioFilePropertyAudioDataByteCount,
-                                                  &propertySize,
-                                                  &originalAudioSize)
-        
-        if possibleError1 != 0 || possibleError2 != 0 {
-            // Handle errors if you want
-        }
+        _ = AudioFileGetProperty(originalAudioFile!,
+                                 kAudioFilePropertyAudioDataByteCount,
+                                 &propertySize,
+                                 &originalAudioSize)
         
         // Set up file that the reversed audio will be loaded into
         var reversedAudioFile: AudioFileID? = nil
@@ -193,13 +225,35 @@ class ViewController: UIViewController {
         let track = Tracks.init(entity: Tracks.entity(), insertInto: context)
         track.setValue(AudioURLPath, forKey: "rectrack")
         
-        let trackName = "record#" + "\(recordTracks.count + 1)"
+        let trackName = "track " + "\(date)"
         track.setValue(trackName, forKey: "name")
+        trackNameLabel.text = trackName
         
         do {
             try context.save()
             recordTracks.append(track)
         } catch {}
+    }
+    
+    // MARK: -- timerTrackUpdate
+    func timerTrackUpdate() {
+        if audioRecorder.isRecording {
+            let sec = Int(audioRecorder.currentTime.truncatingRemainder(dividingBy: 60))
+            let min = Int(audioRecorder.currentTime / 60)
+            let time = String(format: "%02d:%02d", min, sec)
+            recordTimer.text = time
+        }
+        else if isPlaying {
+            let sec = Int(audioPlayer.currentTime.truncatingRemainder(dividingBy: 60))
+            let min = Int(audioPlayer.currentTime / 60)
+            let time = String(format: "%02d:%02d", min, sec)
+            recordTimer.text = time
+            if !audioPlayer.isPlaying {
+                recButtonOutlet.setImage(UIImage(named: "play.png"), for: UIControlState.normal)
+                oneMoreTrackLabel.isEnabled = true
+                playStop()
+            }
+        }
     }
     
     // MARK: -- viewWillAppear method override
