@@ -12,7 +12,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var recordTimer: UILabel!
     @IBOutlet weak var oneMoreTrackLabel: UIButton!
     @IBOutlet weak var spinner: UIActivityIndicatorView!
-    
+    @IBOutlet weak var reverseStatusLabel: UILabel!
+
     var audioRecorder:AVAudioRecorder!
     var audioPlayer:AVAudioPlayer!
     let audioSession:AVAudioSession = AVAudioSession.sharedInstance()
@@ -22,12 +23,15 @@ class ViewController: UIViewController {
     var urlReversed = URL(fileURLWithPath: "")
     var timer = Timer()
     var date = ""
+    var isReversed = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         try! audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: .defaultToSpeaker)
         try! audioSession.setActive(true)
         oneMoreTrackLabel.isEnabled = false
+        recButtonOutlet.addTarget(self, action: #selector(makeItReverse), for: .touchUpInside)
+        reverseStatusLabel.text = ""
     }
     
     @IBAction func recButton(_ sender: UIButton) {
@@ -41,15 +45,16 @@ class ViewController: UIViewController {
             
         else if audioRecorder != nil && !audioRecorder.isRecording && !isPlaying {
             recButtonOutlet.setImage(UIImage(named: "stop.png"), for: UIControlState.normal)
+            reverseStatusLabel.text = ""
             startPlay(urlReversed: urlReversed)
         }
             
             // press to start stop
         else if  audioRecorder.isRecording || isPlaying {
-            recButtonOutlet.setImage(UIImage(named: "play.png"), for: UIControlState.normal)
             recStop()
         }
     }
+    
     
     // MARK: -- StartRec, StartPlay, StartStop functions
     func startRec() {
@@ -97,6 +102,7 @@ class ViewController: UIViewController {
         timer.invalidate()
         recordTimer.text = "00:00"
         toTrackListButton.isEnabled = true
+        oneMoreTrackLabel.isEnabled = true
     }
     
     func recStop() {
@@ -105,24 +111,10 @@ class ViewController: UIViewController {
         }
         if audioRecorder.isRecording {
             self.audioRecorder.stop()
-            
-            // making reversed track
-            urlReversed = makeItReverse()
-            saveTrackURL(url: urlReversed)
-            
-            // remove direct track after reversed was made
-            let fileManager = FileManager.default
-            do {
-                try fileManager.removeItem(at: url)
-            } catch {}
+            isReversed = true
         }
-        do {
-            try audioSession.setActive(false)
-        } catch {}
         timer.invalidate()
         recordTimer.text = "00:00"
-        oneMoreTrackLabel.isEnabled = true
-        toTrackListButton.isEnabled = true
     }
     
     // MARK: -- setup recorder
@@ -158,64 +150,92 @@ class ViewController: UIViewController {
     }
     
     // MARK: -- Reverse function
-    func makeItReverse() -> URL {
-        let forwardAudioURL = url
-        let reversedAudioURL = urlReversed
-        
-        // Load forward audio into originalAudioFile
-        var originalAudioFile: AudioFileID? = nil
-        _ = AudioFileOpenURL(forwardAudioURL as CFURL,
-                             AudioFilePermissions.readPermission,
-                             0,
-                             &originalAudioFile)
-        
-        // Load the size in bytes of the original audio into originalAudioSize variable
-        var originalAudioSize: Int64 = 0
-        var propertySize: UInt32 = 8
-        _ = AudioFileGetProperty(originalAudioFile!,
-                                 kAudioFilePropertyAudioDataByteCount,
-                                 &propertySize,
-                                 &originalAudioSize)
-        
-        // Set up file that the reversed audio will be loaded into
-        var reversedAudioFile: AudioFileID? = nil
-        var format = AudioStreamBasicDescription()
-        format.mSampleRate = 16000
-        format.mFormatID = kAudioFormatLinearPCM
-        format.mChannelsPerFrame = 1
-        format.mFramesPerPacket = 1
-        format.mBitsPerChannel = 16
-        format.mBytesPerPacket = 2
-        format.mBytesPerFrame = 2
-        AudioFileCreateWithURL(reversedAudioURL as CFURL,
-                               kAudioFileCAFType,
-                               &format,
-                               AudioFileFlags.eraseFile,
-                               &reversedAudioFile)
-        
-        // Read data into the reversedAudioFile
-        var readPoint: Int64 = originalAudioSize
-        var writePoint: Int64 = 0
-        var buffer: Int16 = 0
-        while readPoint > 0 {
-            var bytesToRead: UInt32 = 2;
-            AudioFileReadBytes(originalAudioFile!,
-                               false,
-                               readPoint,
-                               &bytesToRead,
-                               &buffer)
-            AudioFileWriteBytes(reversedAudioFile!,
-                                false,
-                                writePoint,
-                                &bytesToRead,
-                                &buffer)
-            writePoint += 2
-            readPoint -= 2
+    func makeItReverse() {
+        if isReversed {
+            isReversed = false
+            let forwardAudioURL = url
+            let reversedAudioURL = urlReversed
+            
+            // Load forward audio into originalAudioFile
+            var originalAudioFile: AudioFileID? = nil
+            _ = AudioFileOpenURL(forwardAudioURL as CFURL,
+                                 AudioFilePermissions.readPermission,
+                                 0,
+                                 &originalAudioFile)
+            
+            // Load the size in bytes of the original audio into originalAudioSize variable
+            var originalAudioSize: Int64 = 0
+            var propertySize: UInt32 = 8
+            _ = AudioFileGetProperty(originalAudioFile!,
+                                     kAudioFilePropertyAudioDataByteCount,
+                                     &propertySize,
+                                     &originalAudioSize)
+
+            // Set up file that the reversed audio will be loaded into
+            var reversedAudioFile: AudioFileID? = nil
+            var format = AudioStreamBasicDescription()
+            format.mSampleRate = 16000
+            format.mFormatID = kAudioFormatLinearPCM
+            format.mChannelsPerFrame = 1
+            format.mFramesPerPacket = 1
+            format.mBitsPerChannel = 16
+            format.mBytesPerPacket = 2
+            format.mBytesPerFrame = 2
+            AudioFileCreateWithURL(reversedAudioURL as CFURL,
+                                   kAudioFileCAFType,
+                                   &format,
+                                   AudioFileFlags.eraseFile,
+                                   &reversedAudioFile)
+
+            // Read data into the reversedAudioFile
+            spinner.startAnimating()
+            reverseStatusLabel.text = "Подождите, обрабатываю..."
+            recButtonOutlet.isEnabled = false
+            DispatchQueue.global(qos: .background).async {
+                var readPoint: Int64 = originalAudioSize
+                var writePoint: Int64 = 0
+                var buffer: Int16 = 0
+                while readPoint > 0 {
+                    var bytesToRead: UInt32 = 2;
+                    AudioFileReadBytes(originalAudioFile!,
+                                       false,
+                                       readPoint,
+                                       &bytesToRead,
+                                       &buffer)
+                    AudioFileWriteBytes(reversedAudioFile!,
+                                        false,
+                                        writePoint,
+                                        &bytesToRead,
+                                        &buffer)
+                    writePoint += 2
+                    readPoint -= 2
+                }
+                AudioFileClose(originalAudioFile!)
+                AudioFileClose(reversedAudioFile!)
+                DispatchQueue.main.async {
+                    self.spinner.stopAnimating()
+                    self.reverseStatusLabel.text = "Готово!"
+                    self.recButtonOutlet.isEnabled = true
+                    self.recButtonOutlet.setImage(UIImage(named: "play.png"), for: UIControlState.normal)
+                    self.oneMoreTrackLabel.isEnabled = true
+                    self.toTrackListButton.isEnabled = true
+                }
+            }
+
+            // saving track to Core Data
+            saveTrackURL(url: reversedAudioURL)
+            
+            // remove direct track after reversed was made
+            let fileManager = FileManager.default
+            do {
+                try fileManager.removeItem(at: url)
+            } catch {}
+            do {
+                try audioSession.setActive(false)
+            } catch {}
+            
+            urlReversed = reversedAudioURL
         }
-        AudioFileClose(originalAudioFile!)
-        AudioFileClose(reversedAudioFile!)
-        
-        return reversedAudioURL
     }
     
     // MARK: -- saveTrack method

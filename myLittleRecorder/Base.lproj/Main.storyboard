@@ -75,9 +75,6 @@
                                     <action selector="oneMoreTrackButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OP3-yz-2oG"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="v29-bF-Zey">
-                                <rect key="frame" x="178" y="488" width="20" height="20"/>
-                            </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="----" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E63-bO-ZM3">
                                 <rect key="frame" x="67" y="162" width="240" height="40"/>
                                 <constraints>
@@ -88,18 +85,30 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fse-Z2-wlN">
+                                <rect key="frame" x="188" y="495" width="0.0" height="0.0"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="v29-bF-Zey">
+                                <rect key="frame" x="177" y="545" width="20" height="20"/>
+                                <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="TCF-TX-Kn5" secondAttribute="bottom" constant="270" id="1By-Vm-mqd"/>
+                            <constraint firstItem="fse-Z2-wlN" firstAttribute="top" secondItem="7gM-8c-wUy" secondAttribute="bottom" constant="29" id="1pZ-Ch-ikm"/>
+                            <constraint firstItem="fse-Z2-wlN" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7WA-Pf-esd"/>
+                            <constraint firstItem="v29-bF-Zey" firstAttribute="top" secondItem="fse-Z2-wlN" secondAttribute="bottom" constant="50" id="BvF-eU-uhQ"/>
                             <constraint firstItem="E63-bO-ZM3" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DA3-vM-TVH"/>
-                            <constraint firstItem="v29-bF-Zey" firstAttribute="top" secondItem="7gM-8c-wUy" secondAttribute="bottom" constant="22" id="IWX-83-Xio"/>
-                            <constraint firstItem="v29-bF-Zey" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Igq-G1-68X"/>
                             <constraint firstItem="Za7-Tg-lp0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KtA-oF-v1G"/>
                             <constraint firstItem="1gj-bJ-ITX" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="LIC-he-DCI"/>
                             <constraint firstItem="q6P-On-h1f" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Mbn-D5-0dZ"/>
                             <constraint firstItem="q6P-On-h1f" firstAttribute="top" secondItem="E63-bO-ZM3" secondAttribute="bottom" constant="8" id="OVw-nU-N8Q"/>
                             <constraint firstItem="7gM-8c-wUy" firstAttribute="top" secondItem="Za7-Tg-lp0" secondAttribute="bottom" constant="39" id="Qth-TP-7LW"/>
+                            <constraint firstItem="v29-bF-Zey" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="UE1-ab-Ah4"/>
                             <constraint firstItem="1gj-bJ-ITX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="aXX-Tv-G4I"/>
                             <constraint firstItem="Za7-Tg-lp0" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="fXK-RH-KRy"/>
                             <constraint firstItem="TCF-TX-Kn5" firstAttribute="leading" secondItem="Za7-Tg-lp0" secondAttribute="trailing" constant="17" id="iPr-ZV-BQs"/>
@@ -112,6 +121,7 @@
                         <outlet property="oneMoreTrackLabel" destination="TCF-TX-Kn5" id="Beo-90-4DW"/>
                         <outlet property="recButtonOutlet" destination="Za7-Tg-lp0" id="eXc-vu-Fsh"/>
                         <outlet property="recordTimer" destination="q6P-On-h1f" id="HAb-Ki-CPM"/>
+                        <outlet property="reverseStatusLabel" destination="fse-Z2-wlN" id="Wqk-IK-OJt"/>
                         <outlet property="spinner" destination="v29-bF-Zey" id="PSZ-ji-L8A"/>
                         <outlet property="toTrackListButton" destination="7gM-8c-wUy" id="PlJ-bP-n4l"/>
                         <outlet property="trackNameLabel" destination="E63-bO-ZM3" id="f4E-Zx-SEj"/>
