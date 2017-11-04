@@ -25,6 +25,35 @@ class ViewController: UIViewController {
     var date = ""
     var isReversed = false
     
+    
+    var vowelSounds = ["а", "е", "и", "о", "у"]
+    var consonantSounds = ["б", "в", "д", "з", "к", "л", "м", "н", "р", "п", "с", "т", "ф", "х", "ч", "ш"]
+    
+    // придумывание глупых имен
+    func nameCreator() -> String {
+        var name = ""
+        var letter = ""
+        var consonantTogether = 0
+        var vowelTogether = 0
+        
+        let nameLengh = (arc4random() % 4) + 3
+        for i in 0...nameLengh {
+            let soundType = arc4random() % 2
+            if (soundType == 0 && vowelTogether < 3) || consonantTogether == 2 {
+                consonantTogether = 0
+                letter = vowelSounds[Int(arc4random() % 5)]
+                vowelTogether += 1
+            }
+            else {
+                letter = consonantSounds[Int(arc4random() % 16)]
+                consonantTogether += 1
+            }
+            if i == 0 { name.append(letter.capitalized) }
+            else { name.append(letter) }
+        }
+        return name
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         try! audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: .defaultToSpeaker)
@@ -101,6 +130,7 @@ class ViewController: UIViewController {
         isPlaying = false
         timer.invalidate()
         recordTimer.text = "00:00"
+        recButtonOutlet.setImage(UIImage(named: "play.png"), for: UIControlState.normal)
         toTrackListButton.isEnabled = true
         oneMoreTrackLabel.isEnabled = true
     }
@@ -147,6 +177,7 @@ class ViewController: UIViewController {
         recButtonOutlet.setImage(UIImage(named: "rec.png"), for: UIControlState.normal)
         oneMoreTrackLabel.isEnabled = false
         audioRecorder = nil
+        trackNameLabel.text = "----"
     }
     
     // MARK: -- Reverse function
@@ -245,7 +276,8 @@ class ViewController: UIViewController {
         let track = Tracks.init(entity: Tracks.entity(), insertInto: context)
         track.setValue(AudioURLPath, forKey: "rectrack")
         
-        let trackName = "track " + "\(date)"
+//        let trackName = "track " + "\(date)"
+        let trackName = nameCreator()
         track.setValue(trackName, forKey: "name")
         trackNameLabel.text = trackName
         
